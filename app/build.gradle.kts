@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -56,4 +57,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // Íconos extendidos de Material (Cake, Badge, StarBorder, Call, Visibility, etc.)
+    // Sin versión fija: el BOM de arriba ya la resuelve y evita conflictos.
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Room (persistencia local) — usado por Usuario.kt con @Entity/@PrimaryKey
+    implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
+    ksp("androidx.room:room-compiler:2.7.1")
 }
