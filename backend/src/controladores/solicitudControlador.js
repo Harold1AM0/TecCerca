@@ -147,6 +147,9 @@ const obtenerSolicitudesTecnico = async (req, res) => {
         });
     }
 };
+
+
+
 // Actualizar estado de solicitud
 const actualizarEstadoSolicitud = async (req, res) => {
 
@@ -155,6 +158,41 @@ const actualizarEstadoSolicitud = async (req, res) => {
         const idSolicitud = Number(req.params.id);
 
         const { estado } = req.body;
+
+
+        const estadosPermitidos = [
+            "PENDIENTE",
+            "ACEPTADA",
+            "RECHAZADA",
+            "FINALIZADA"
+        ];
+
+
+        if (!estadosPermitidos.includes(estado)) {
+
+            return res.status(400).json({
+                mensaje: "Estado no válido"
+            });
+
+        }
+
+
+        const solicitudExiste = await prisma.solicitudServicio.findUnique({
+
+            where: {
+                idSolicitud
+            }
+
+        });
+
+
+        if (!solicitudExiste) {
+
+            return res.status(404).json({
+                mensaje: "Solicitud no encontrada"
+            });
+
+        }
 
 
         const solicitud = await prisma.solicitudServicio.update({
@@ -169,9 +207,59 @@ const actualizarEstadoSolicitud = async (req, res) => {
         });
 
 
+
+        // Actualizar disponibilidad del técnico
+
+        if (solicitud.idTecnico) {
+
+
+            if (estado === "ACEPTADA") {
+
+                await prisma.tecnico.update({
+
+                    where: {
+                        idTecnico: solicitud.idTecnico
+                    },
+
+                    data: {
+                        disponible: false
+                    }
+
+                });
+
+            }
+
+
+
+            if (
+                estado === "FINALIZADA" ||
+                estado === "RECHAZADA"
+            ) {
+
+                await prisma.tecnico.update({
+
+                    where: {
+                        idTecnico: solicitud.idTecnico
+                    },
+
+                    data: {
+                        disponible: true
+                    }
+
+                });
+
+            }
+
+        }
+
+
+
         res.json({
+
             mensaje: "Estado de solicitud actualizado correctamente",
+
             solicitud
+
         });
 
 
@@ -184,6 +272,7 @@ const actualizarEstadoSolicitud = async (req, res) => {
         });
     }
 };
+
 
 
 module.exports = {
