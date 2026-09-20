@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ROLES DEL SISTEMA
+
+model Rol {
+  idRol  Int    @id @default(autoincrement())
+  nombre String @unique
+
+  usuarios Usuario[]
+
+  @@map("roles")
+}
+
+// USUARIOS
+
+model Usuario {
+  idUsuario Int     @id @default(autoincrement())
+  nombre    String
+  correo    String  @unique
+  password  String
+  telefono  String?
+
+  idRol Int
+
+  rol Rol @relation(fields: [idRol], references: [idRol])
+
+  cliente Cliente?
+  tecnico Tecnico?
+
+  @@map("usuarios")
+}
+
+// CLIENTES
+
+model Cliente {
+  idCliente Int @id @default(autoincrement())
+
+  idUsuario Int @unique
+
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
+
+  solicitudes SolicitudServicio[]
+
+  @@map("clientes")
+}
+
+// TECNICOS
+
+model Tecnico {
+  idTecnico Int @id @default(autoincrement())
+
+  idUsuario Int @unique
+
+  experiencia Int?
+  descripcion String?
+
+  latitud  Decimal?
+  longitud Decimal?
+
+  puntajePromedio Decimal @default(0)
+
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
+
+  especialidades TecnicoEspecialidad[]
+
+  solicitudes SolicitudServicio[]
+
+  valoraciones Valoracion[]
+
+  @@map("tecnicos")
+}
+
+// ESPECIALIDADES
+
+model Especialidad {
+  idEspecialidad Int @id @default(autoincrement())
+
+  nombre String @unique
+
+  descripcion String?
+
+  tecnicos TecnicoEspecialidad[]
+
+  @@map("especialidades")
+}
+
+// RELACION TECNICO - ESPECIALIDAD
+
+model TecnicoEspecialidad {
+  idTecnico      Int
+  idEspecialidad Int
+
+  tecnico Tecnico @relation(fields: [idTecnico], references: [idTecnico])
+
+  especialidad Especialidad @relation(fields: [idEspecialidad], references: [idEspecialidad])
+
+  @@id([idTecnico, idEspecialidad])
+  @@map("tecnico_especialidad")
+}
+
+// SOLICITUD DE SERVICIO
+
+model SolicitudServicio {
+  idSolicitud Int @id @default(autoincrement())
+
+  idCliente Int
+
+  idTecnico Int?
+
+  descripcion String
+
+  estado String @default("PENDIENTE")
+
+  fecha DateTime @default(now())
+
+  cliente Cliente @relation(fields: [idCliente], references: [idCliente])
+
+  tecnico Tecnico? @relation(fields: [idTecnico], references: [idTecnico])
+
+  valoracion Valoracion?
+
+  @@map("solicitudes_servicio")
+}
+
+// VALORACIONES
+
+model Valoracion {
+  idValoracion Int @id @default(autoincrement())
+
+  idSolicitud Int @unique
+
+  idTecnico Int
+
+  puntuacion Int
+
+  comentario String?
+
+  solicitud SolicitudServicio @relation(fields: [idSolicitud], references: [idSolicitud])
+
+  tecnico Tecnico @relation(fields: [idTecnico], references: [idTecnico])
+
+  @@map("valoraciones")
+}
