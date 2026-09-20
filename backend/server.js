@@ -6,6 +6,8 @@ require("dotenv").config();
 const tecnicoRutas = require("./src/rutas/tecnicoRutas");
 const especialidadRutas = require("./src/rutas/especialidadRutas");
 const authRutas = require("./src/rutas/authRutas");
+const ubicacionRutas = require("./src/rutas/ubicacionRutas");
+const solicitudRutas = require("./src/rutas/solicitudRutas");
 
 
 const app = express();
@@ -20,6 +22,8 @@ app.use(express.json());
 app.use("/api/tecnicos", tecnicoRutas);
 app.use("/api/especialidades", especialidadRutas);
 app.use("/api/auth", authRutas);
+app.use("/api/ubicacion", ubicacionRutas);
+app.use("/api/solicitudes", solicitudRutas);
 
 
 // Ruta de prueba
