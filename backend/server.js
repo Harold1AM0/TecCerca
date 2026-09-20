@@ -2,12 +2,24 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+
+const tecnicoRutas = require("./src/rutas/tecnicoRutas");
+const especialidadRutas = require("./src/rutas/especialidadRutas");
+const authRutas = require("./src/rutas/authRutas");
+
+
 const app = express();
 
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+
+// Rutas API
+app.use("/api/tecnicos", tecnicoRutas);
+app.use("/api/especialidades", especialidadRutas);
+app.use("/api/auth", authRutas);
 
 
 // Ruta de prueba
