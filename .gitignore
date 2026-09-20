@@ -1,15 +1,60 @@
+
+# ANDROID / GRADLE
+
 *.iml
+
 .gradle
+
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
+
 /build
+/app/build
+
 /captures
+
 .externalNativeBuild
+
 .cxx
-local.properties
+
+
+# ANDROID STUDIO / INTELLIJ IDEA
+
+.idea/
+
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+
+# NODE.JS BACKEND
+
+# Dependencias instaladas automáticamente
+backend/node_modules/
+
+# Variables de entorno (credenciales, BD, claves)
+backend/.env
+
+# Archivos de logs
+*.log
+
+
+# BASE DE DATOS
+
+# Archivos locales de base de datos
+*.sqlite
+*.db
+
+
+# ARCHIVOS DEL SISTEMA
+
+.DS_Store
+Thumbs.db
+
+
+# ARCHIVOS TEMPORALES
+
+*.tmp
+*.temp
