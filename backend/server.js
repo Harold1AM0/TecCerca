@@ -8,6 +8,7 @@ const especialidadRutas = require("./src/rutas/especialidadRutas");
 const authRutas = require("./src/rutas/authRutas");
 const ubicacionRutas = require("./src/rutas/ubicacionRutas");
 const solicitudRutas = require("./src/rutas/solicitudRutas");
+const valoracionRutas = require("./src/rutas/valoracionRutas");
 
 
 const app = express();
@@ -24,6 +25,7 @@ app.use("/api/especialidades", especialidadRutas);
 app.use("/api/auth", authRutas);
 app.use("/api/ubicacion", ubicacionRutas);
 app.use("/api/solicitudes", solicitudRutas);
+app.use("/api/valoraciones", valoracionRutas);
 
 
 // Ruta de prueba

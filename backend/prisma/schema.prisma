@@ -72,6 +72,8 @@ model Tecnico {
 
   puntajePromedio Decimal @default(0)
 
+  disponible Boolean @default(false)
+
   usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
 
   especialidades TecnicoEspecialidad[]

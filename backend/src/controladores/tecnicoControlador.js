@@ -13,6 +13,7 @@ const obtenerTecnicos = async (req, res) => {
                 latitud: true,
                 longitud: true,
                 puntajePromedio: true,
+                disponible: true,
 
                 usuario: {
                     select: {
@@ -64,6 +65,7 @@ const obtenerTecnicosPorEspecialidad = async (req, res) => {
                 latitud: true,
                 longitud: true,
                 puntajePromedio: true,
+                disponible: true,
 
                 usuario: {
                     select: {
@@ -90,7 +92,53 @@ const obtenerTecnicosPorEspecialidad = async (req, res) => {
 
 
 
+// Actualizar disponibilidad del técnico
+const actualizarDisponibilidad = async (req, res) => {
+
+    try {
+
+        const idTecnico = Number(req.params.id);
+
+        const { disponible } = req.body;
+
+
+        const tecnico = await prisma.tecnico.update({
+
+            where: {
+                idTecnico
+            },
+
+            data: {
+                disponible
+            },
+
+            select: {
+                idTecnico: true,
+                disponible: true
+            }
+        });
+
+
+        res.json({
+            mensaje: "Disponibilidad actualizada correctamente",
+            tecnico
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            mensaje: "Error al actualizar disponibilidad"
+        });
+    }
+};
+
+
+
 module.exports = {
     obtenerTecnicos,
-    obtenerTecnicosPorEspecialidad
+    obtenerTecnicosPorEspecialidad,
+    actualizarDisponibilidad
 };
