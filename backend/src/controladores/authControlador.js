@@ -1,4 +1,5 @@
 const prisma = require("../configuracion/prisma");
+const bcrypt = require("bcrypt");
 
 
 // Registrar usuario
@@ -15,11 +16,14 @@ const registrarUsuario = async (req, res) => {
         } = req.body;
 
 
+        const passwordEncriptada = await bcrypt.hash(password, 10);
+
+
         const usuario = await prisma.usuario.create({
             data: {
                 nombre,
                 correo,
-                password,
+                password: passwordEncriptada,
                 telefono,
                 idRol
             }
@@ -28,7 +32,13 @@ const registrarUsuario = async (req, res) => {
 
         res.status(201).json({
             mensaje: "Usuario registrado correctamente",
-            usuario
+            usuario: {
+                idUsuario: usuario.idUsuario,
+                nombre: usuario.nombre,
+                correo: usuario.correo,
+                telefono: usuario.telefono,
+                idRol: usuario.idRol
+            }
         });
 
 
@@ -62,7 +72,7 @@ const iniciarSesion = async (req, res) => {
         });
 
 
-        if (!usuario || usuario.password !== password) {
+        if (!usuario || !(await bcrypt.compare(password, usuario.password))) {
 
             return res.status(401).json({
                 mensaje: "Correo o contraseña incorrectos"
