@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.teccerca.data.modelo.PerfilTecnico
 
 // Tipo de archivo: Kotlin file que contiene una función @Composable de nivel superior
 private val TealPrimary = Color(0xFF009688)
