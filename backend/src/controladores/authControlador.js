@@ -13,7 +13,10 @@ const registrarUsuario = async (req, res) => {
             correo,
             password,
             telefono,
-            idRol
+            idRol,
+            experiencia,
+            descripcion,
+            especialidades
         } = req.body;
 
 
@@ -23,6 +26,7 @@ const registrarUsuario = async (req, res) => {
 
 
         const resultado = await prisma.$transaction(async (tx) => {
+
 
 
             // Crear usuario
@@ -47,7 +51,7 @@ const registrarUsuario = async (req, res) => {
 
 
 
-            // Si es cliente
+            // Crear cliente
 
             if (idRol === 1) {
 
@@ -67,22 +71,48 @@ const registrarUsuario = async (req, res) => {
 
 
 
-            // Si es técnico
+            // Crear técnico
 
             if (idRol === 2) {
 
 
-                await tx.tecnico.create({
+                const tecnico = await tx.tecnico.create({
 
                     data: {
 
                         idUsuario: usuario.idUsuario,
+
+                        experiencia,
+
+                        descripcion,
 
                         disponible: false
 
                     }
 
                 });
+
+
+
+                // Crear especialidades del técnico
+
+                if (especialidades && especialidades.length > 0) {
+
+
+                    await tx.tecnicoEspecialidad.createMany({
+
+                        data: especialidades.map(idEspecialidad => ({
+
+                            idTecnico: tecnico.idTecnico,
+
+                            idEspecialidad
+
+                        }))
+
+                    });
+
+
+                }
 
 
             }
@@ -96,34 +126,34 @@ const registrarUsuario = async (req, res) => {
 
 
 
+
         res.status(201).json({
 
-            mensaje: "Usuario registrado correctamente",
+        mensaje: "Usuario registrado correctamente",
 
-            usuario: resultado
+        usuario: {
+        idUsuario: resultado.idUsuario,
+        nombre: resultado.nombre,
+        correo: resultado.correo,
+        telefono: resultado.telefono,
+        idRol: resultado.idRol
+            }
 
         });
 
 
 
     } catch (error) {
-
-
         console.error(error);
 
-
         res.status(500).json({
-
-            mensaje: "Error al registrar usuario"
-
+            mensaje: "Error al registrar usuario",
+             error: error.message
         });
 
     }
 
 };
-
-
-
 
 
 // Iniciar sesión
@@ -165,6 +195,7 @@ const iniciarSesion = async (req, res) => {
 
 
 
+
         const passwordCorrecta = await bcrypt.compare(
 
             password,
@@ -185,9 +216,6 @@ const iniciarSesion = async (req, res) => {
             });
 
         }
-
-
-
 
         res.json({
 
@@ -210,11 +238,7 @@ const iniciarSesion = async (req, res) => {
 
 
     } catch (error) {
-
-
         console.error(error);
-
-
         res.status(500).json({
 
             mensaje: "Error al iniciar sesión"

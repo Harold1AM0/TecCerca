@@ -6,8 +6,9 @@ const {
     obtenerTecnicos,
     obtenerTecnicosPorEspecialidad,
     obtenerTecnicosDisponibles,
-    obtenerTecnicosDisponiblesPorEspecialidad,
-    actualizarDisponibilidad
+    actualizarDisponibilidad,
+    actualizarUbicacion,
+    obtenerTecnicosCercanos
 } = require("../controladores/tecnicoControlador");
 
 
@@ -19,10 +20,6 @@ router.get("/", obtenerTecnicos);
 router.get("/disponibles", obtenerTecnicosDisponibles);
 
 
-// Obtener técnicos disponibles por especialidad
-router.get("/disponibles/especialidad/:id", obtenerTecnicosDisponiblesPorEspecialidad);
-
-
 // Obtener técnicos por especialidad
 router.get("/especialidad/:id", obtenerTecnicosPorEspecialidad);
 
@@ -30,5 +27,11 @@ router.get("/especialidad/:id", obtenerTecnicosPorEspecialidad);
 // Actualizar disponibilidad del técnico
 router.put("/:id/disponibilidad", actualizarDisponibilidad);
 
+
+// Actualizar ubicación del técnico
+router.put("/:id/ubicacion", actualizarUbicacion);
+
+//Mostrar tecnicos cercanos xd
+router.post("/cercanos", obtenerTecnicosCercanos);
 
 module.exports = router;
