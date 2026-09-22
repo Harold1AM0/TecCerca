@@ -13,20 +13,65 @@ const crearSolicitud = async (req, res) => {
         } = req.body;
 
 
-        const solicitud = await prisma.solicitudServicio.create({
-            data: {
+        // Evitar solicitudes duplicadas activas
+        const solicitudActiva = await prisma.solicitudServicio.findFirst({
+
+            where: {
+
                 idCliente,
+
                 idTecnico,
-                descripcion,
-                estado: "PENDIENTE"
+
+                estado: {
+                    in: [
+                        "PENDIENTE",
+                        "ACEPTADA"
+                    ]
+                }
+
             }
+
         });
+
+
+        if (solicitudActiva) {
+
+            return res.status(400).json({
+
+                mensaje: "Ya existe una solicitud activa para este técnico"
+
+            });
+
+        }
+
+
+
+        const solicitud = await prisma.solicitudServicio.create({
+
+            data: {
+
+                idCliente,
+
+                idTecnico,
+
+                descripcion,
+
+                estado: "PENDIENTE"
+
+            }
+
+        });
+
 
 
         res.status(201).json({
+
             mensaje: "Solicitud creada correctamente",
+
             solicitud
+
         });
+
 
 
     } catch (error) {
@@ -34,14 +79,19 @@ const crearSolicitud = async (req, res) => {
         console.error(error);
 
         res.status(500).json({
+
             mensaje: "Error al crear solicitud"
+
         });
+
     }
+
 };
 
 
 
-// Obtener solicitudes de un cliente
+
+// Solicitudes del cliente
 const obtenerSolicitudesCliente = async (req, res) => {
 
     try {
@@ -52,8 +102,11 @@ const obtenerSolicitudesCliente = async (req, res) => {
         const solicitudes = await prisma.solicitudServicio.findMany({
 
             where: {
+
                 idCliente
+
             },
+
 
             select: {
 
@@ -62,7 +115,9 @@ const obtenerSolicitudesCliente = async (req, res) => {
                 estado: true,
                 fecha: true,
 
+
                 tecnico: {
+
                     select: {
 
                         idTecnico: true,
@@ -70,159 +125,383 @@ const obtenerSolicitudesCliente = async (req, res) => {
                         descripcion: true,
                         puntajePromedio: true,
 
+
                         usuario: {
+
                             select: {
+
                                 nombre: true,
                                 telefono: true
+
                             }
+
                         }
+
                     }
+
                 }
+
             }
+
         });
 
 
         res.json(solicitudes);
 
 
-    } catch (error) {
+    } catch(error) {
 
         console.error(error);
 
+
         res.status(500).json({
-            mensaje: "Error al obtener solicitudes"
+
+            mensaje:"Error al obtener solicitudes"
+
         });
+
     }
+
 };
 
 
 
-// Obtener solicitudes de un técnico
-const obtenerSolicitudesTecnico = async (req, res) => {
+
+// Solicitudes pendientes del técnico
+const obtenerSolicitudesPendientesTecnico = async (req,res)=>{
 
     try {
 
+
         const idTecnico = Number(req.params.id);
+
 
 
         const solicitudes = await prisma.solicitudServicio.findMany({
 
             where: {
-                idTecnico
+
+                idTecnico,
+
+                estado:"PENDIENTE"
+
             },
 
-            select: {
 
-                idSolicitud: true,
-                descripcion: true,
-                estado: true,
-                fecha: true,
+            select:{
 
-                cliente: {
-                    select: {
+                idSolicitud:true,
 
-                        idCliente: true,
+                descripcion:true,
 
-                        usuario: {
-                            select: {
-                                nombre: true,
-                                telefono: true
+                estado:true,
+
+                fecha:true,
+
+
+                cliente:{
+
+                    select:{
+
+                        idCliente:true,
+
+
+                        usuario:{
+
+                            select:{
+
+                                nombre:true,
+
+                                telefono:true
+
                             }
+
                         }
+
                     }
+
                 }
+
             }
+
         });
 
 
         res.json(solicitudes);
 
 
-    } catch (error) {
+
+    }catch(error){
 
         console.error(error);
 
+
         res.status(500).json({
-            mensaje: "Error al obtener solicitudes"
+
+            mensaje:"Error al obtener solicitudes pendientes"
+
         });
+
     }
+
 };
 
 
 
-// Actualizar estado de solicitud
-const actualizarEstadoSolicitud = async (req, res) => {
+
+
+// Servicio actual del técnico
+const obtenerServicioActualTecnico = async (req,res)=>{
 
     try {
 
-        const idSolicitud = Number(req.params.id);
 
-        const { estado } = req.body;
-
-
-        const estadosPermitidos = [
-            "PENDIENTE",
-            "ACEPTADA",
-            "RECHAZADA",
-            "FINALIZADA"
-        ];
+        const idTecnico = Number(req.params.id);
 
 
-        if (!estadosPermitidos.includes(estado)) {
 
-            return res.status(400).json({
-                mensaje: "Estado no válido"
-            });
+        const solicitud = await prisma.solicitudServicio.findMany({
 
-        }
+            where:{
+
+                idTecnico,
+
+                estado:"ACEPTADA"
+
+            },
 
 
-        const solicitudExiste = await prisma.solicitudServicio.findUnique({
+            select:{
 
-            where: {
-                idSolicitud
+                idSolicitud:true,
+
+                descripcion:true,
+
+                estado:true,
+
+                fecha:true,
+
+
+                cliente:{
+
+                    select:{
+
+                        idCliente:true,
+
+
+                        usuario:{
+
+                            select:{
+
+                                nombre:true,
+
+                                telefono:true
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
             }
 
         });
 
 
-        if (!solicitudExiste) {
 
-            return res.status(404).json({
-                mensaje: "Solicitud no encontrada"
+        res.json(solicitud);
+
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        res.status(500).json({
+
+            mensaje:"Error al obtener servicio actual"
+
+        });
+
+    }
+
+};
+
+
+
+
+// Historial del técnico
+const obtenerHistorialTecnico = async(req,res)=>{
+
+    try{
+
+
+        const idTecnico = Number(req.params.id);
+
+
+
+        const solicitudes = await prisma.solicitudServicio.findMany({
+
+            where:{
+
+                idTecnico,
+
+                estado:{
+
+                    in:[
+
+                        "FINALIZADA",
+
+                        "RECHAZADA"
+
+                    ]
+
+                }
+
+            },
+
+
+            select:{
+
+                idSolicitud:true,
+
+                descripcion:true,
+
+                estado:true,
+
+                fecha:true,
+
+
+                cliente:{
+
+                    select:{
+
+                        idCliente:true,
+
+
+                        usuario:{
+
+                            select:{
+
+                                nombre:true,
+
+                                telefono:true
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        });
+
+
+
+        res.json(solicitudes);
+
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        res.status(500).json({
+
+            mensaje:"Error al obtener historial"
+
+        });
+
+    }
+
+};
+
+
+
+
+
+// Actualizar estado
+const actualizarEstadoSolicitud = async(req,res)=>{
+
+    try{
+
+
+        const idSolicitud = Number(req.params.id);
+
+
+        const {estado}=req.body;
+
+
+
+        const estadosPermitidos=[
+
+            "PENDIENTE",
+
+            "ACEPTADA",
+
+            "RECHAZADA",
+
+            "FINALIZADA"
+
+        ];
+
+
+
+        if(!estadosPermitidos.includes(estado)){
+
+            return res.status(400).json({
+
+                mensaje:"Estado no válido"
+
             });
 
         }
+
 
 
         const solicitud = await prisma.solicitudServicio.update({
 
-            where: {
+            where:{
+
                 idSolicitud
+
             },
 
-            data: {
+            data:{
+
                 estado
+
             }
+
         });
 
 
 
-        // Actualizar disponibilidad del técnico
 
-        if (solicitud.idTecnico) {
+        if(solicitud.idTecnico){
 
 
-            if (estado === "ACEPTADA") {
+            if(estado==="ACEPTADA"){
 
                 await prisma.tecnico.update({
 
-                    where: {
-                        idTecnico: solicitud.idTecnico
+                    where:{
+
+                        idTecnico:solicitud.idTecnico
+
                     },
 
-                    data: {
-                        disponible: false
+                    data:{
+
+                        disponible:false
+
                     }
 
                 });
@@ -231,53 +510,78 @@ const actualizarEstadoSolicitud = async (req, res) => {
 
 
 
-            if (
-                estado === "FINALIZADA" ||
-                estado === "RECHAZADA"
-            ) {
+            if(
+
+                estado==="FINALIZADA" ||
+
+                estado==="RECHAZADA"
+
+            ){
 
                 await prisma.tecnico.update({
 
-                    where: {
-                        idTecnico: solicitud.idTecnico
+                    where:{
+
+                        idTecnico:solicitud.idTecnico
+
                     },
 
-                    data: {
-                        disponible: true
+                    data:{
+
+                        disponible:true
+
                     }
 
                 });
 
             }
+
 
         }
+
 
 
 
         res.json({
 
-            mensaje: "Estado de solicitud actualizado correctamente",
+            mensaje:"Estado de solicitud actualizado correctamente",
 
             solicitud
 
         });
 
 
-    } catch (error) {
+
+    }catch(error){
 
         console.error(error);
 
+
         res.status(500).json({
-            mensaje: "Error al actualizar estado de solicitud"
+
+            mensaje:"Error al actualizar estado"
+
         });
+
     }
+
 };
 
 
 
-module.exports = {
+
+module.exports={
+
     crearSolicitud,
+
     obtenerSolicitudesCliente,
-    obtenerSolicitudesTecnico,
+
+    obtenerSolicitudesPendientesTecnico,
+
+    obtenerServicioActualTecnico,
+
+    obtenerHistorialTecnico,
+
     actualizarEstadoSolicitud
+
 };

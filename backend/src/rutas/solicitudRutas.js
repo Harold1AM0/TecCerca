@@ -2,28 +2,72 @@ const express = require("express");
 
 const router = express.Router();
 
+
 const {
+
     crearSolicitud,
+
     obtenerSolicitudesCliente,
-    obtenerSolicitudesTecnico,
+
+    obtenerSolicitudesPendientesTecnico,
+
+    obtenerServicioActualTecnico,
+
+    obtenerHistorialTecnico,
+
     actualizarEstadoSolicitud
+
+
 } = require("../controladores/solicitudControlador");
 
 
+
 // Crear solicitud
+
 router.post("/", crearSolicitud);
 
 
-// Obtener solicitudes de un cliente
+
+// Solicitudes del cliente
+
 router.get("/cliente/:id", obtenerSolicitudesCliente);
 
 
-// Obtener solicitudes de un técnico
-router.get("/tecnico/:id", obtenerSolicitudesTecnico);
+
+// Solicitudes pendientes del técnico
+
+router.get(
+    "/tecnico/:id/pendientes",
+    obtenerSolicitudesPendientesTecnico
+);
 
 
-// Actualizar estado de solicitud
-router.put("/:id/estado", actualizarEstadoSolicitud);
+
+// Servicio actual del técnico
+
+router.get(
+    "/tecnico/:id/actual",
+    obtenerServicioActualTecnico
+);
+
+
+
+// Historial del técnico
+
+router.get(
+    "/tecnico/:id/historial",
+    obtenerHistorialTecnico
+);
+
+
+
+// Cambiar estado
+
+router.put(
+    "/:id/estado",
+    actualizarEstadoSolicitud
+);
+
 
 
 module.exports = router;
