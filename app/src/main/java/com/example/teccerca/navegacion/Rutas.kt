@@ -1,4 +1,14 @@
 package com.example.teccerca.navegacion
 
-class Rutas {
+
+object Rutas {
+
+    const val LOGIN = "login"
+
+    const val REGISTRO = "registro"
+
+    const val CLIENTE = "cliente"
+
+    const val TECNICO = "tecnico"
+
 }

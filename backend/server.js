@@ -30,10 +30,15 @@ app.use("/api/valoraciones", valoracionRutas);
 
 // Ruta de prueba
 app.get("/", (req, res) => {
+
     res.json({
+
         proyecto: "TecCerca",
+
         mensaje: "Backend funcionando correctamente 🚀"
+
     });
+
 });
 
 
@@ -41,6 +46,11 @@ app.get("/", (req, res) => {
 const PUERTO = process.env.PUERTO || 3000;
 
 
-app.listen(PUERTO, () => {
-    console.log(`Servidor TecCerca ejecutándose en puerto ${PUERTO}`);
+// Escuchar conexiones externas (emulador Android)
+app.listen(PUERTO, "0.0.0.0", () => {
+
+    console.log(
+        `Servidor TecCerca ejecutándose en puerto ${PUERTO}`
+    );
+
 });
