@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.parcelize)
     id("com.google.devtools.ksp")
 }
 
@@ -62,6 +63,7 @@ dependencies {
     // Sin versión fija: el BOM de arriba ya la resuelve y evita conflictos.
     implementation("androidx.compose.material:material-icons-extended")
 
+    // El plugin Parcelize agrega su runtime con la versión correspondiente.
     // Room (persistencia local) — usado por Usuario.kt con @Entity/@PrimaryKey
     implementation("androidx.room:room-runtime:2.7.1")
     implementation("androidx.room:room-ktx:2.7.1")

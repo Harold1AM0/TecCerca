@@ -5,10 +5,10 @@ import androidx.compose.ui.graphics.Color
 // Tipo de archivo: Kotlin file con propiedades top-level (constantes de color)
 
 // Color principal de marca (teal usado en botones, logo, íconos activos)
-val TealPrimary = Color(0xFF009688)
-val TealPrimaryDark = Color(0xFF00796B)
-val TealPrimaryLight = Color(0xFFB2DFDB)
-val TealContainer = Color(0xFFE0F2F1)
+val TealPrimary = Color(0xFF087F77)
+val TealPrimaryDark = Color(0xFF065F59)
+val TealPrimaryLight = Color(0xFF87DCD2)
+val TealContainer = Color(0xFFDDF5F0)
 
 // Estados y acentos
 val VerdeActivo = Color(0xFF4CAF50)
@@ -17,10 +17,10 @@ val RojoError = Color(0xFFD32F2F)
 
 // Neutros para modo claro
 val FondoClaro = Color(0xFFFFFFFF)
-val SuperficieClara = Color(0xFFF5F5F5)
-val TextoPrimarioClaro = Color(0xFF1B1B1B)
-val TextoSecundarioClaro = Color(0xFF6E6E6E)
-val BordeClaro = Color(0xFFE0E0E0)
+val SuperficieClara = Color(0xFFF7F9FA)
+val TextoPrimarioClaro = Color(0xFF111C32)
+val TextoSecundarioClaro = Color(0xFF53647D)
+val BordeClaro = Color(0xFFE1E8F0)
 
 // Neutros para modo oscuro
 val FondoOscuro = Color(0xFF121212)

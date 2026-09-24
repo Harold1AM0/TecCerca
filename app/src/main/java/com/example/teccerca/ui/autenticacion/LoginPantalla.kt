@@ -1,291 +1,106 @@
 package com.example.teccerca.ui.autenticacion
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import com.example.teccerca.data.respuesta.UsuarioRespuesta
 
 @Composable
 fun LoginPantalla(
     viewModel: AutenticacionViewModel = viewModel(),
-    irCliente: () -> Unit,
-    irTecnico: () -> Unit,
-    irRegistro: () -> Unit
+    irCliente: (UsuarioRespuesta) -> Unit, irTecnico: () -> Unit, irRegistro: () -> Unit,
+    correoInicial: String = ""
 ) {
-
-
-    var correo by remember {
-        mutableStateOf("")
-    }
-
-
-    var password by remember {
-        mutableStateOf("")
-    }
-
-
-    var mostrarPassword by remember {
-        mutableStateOf(false)
-    }
-
-
-
+    var correo by rememberSaveable { mutableStateOf(correoInicial) }
+    LaunchedEffect(correoInicial) { if (correoInicial.isNotBlank()) correo = correoInicial }
+    var password by remember { mutableStateOf("") }
+    var mostrarPassword by remember { mutableStateOf(false) }
     val mensaje by viewModel.mensaje
+    val cargando by viewModel.cargando
 
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(25.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-
-
-        Text(
-            text = "🔧",
-            style = MaterialTheme.typography.displayMedium
-        )
-
-
-
-        Spacer(
-            modifier = Modifier.height(10.dp)
-        )
-
-
-
-        Text(
-            text = "TecCerca",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color(0xFF009688)
-        )
-
-
-
-        Text(
-            text = "Encuentra técnicos cerca de ti",
-            color = Color.Gray
-        )
-
-
-
-        Spacer(
-            modifier = Modifier.height(35.dp)
-        )
-
-
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
-        ) {
-
-
+    Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(Modifier.safeDrawingPadding().imePadding().verticalScroll(rememberScrollState())) {
             Column(
-                modifier = Modifier.padding(20.dp)
+                Modifier.fillMaxWidth().padding(top = 48.dp, bottom = 28.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-
-
-                Text(
-                    text = "Ingresa a tu cuenta",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-
-                Spacer(
-                    modifier = Modifier.height(20.dp)
-                )
-
-
-
-                OutlinedTextField(
-
-                    value = correo,
-
-                    onValueChange = {
-                        correo = it
-                    },
-
-                    label = {
-                        Text("Correo electrónico")
-                    },
-
-                    leadingIcon = {
-                        Icon(
-                            Icons.Default.Email,
-                            contentDescription = null
-                        )
-                    },
-
-                    modifier = Modifier.fillMaxWidth()
-
-                )
-
-
-
-                Spacer(
-                    modifier = Modifier.height(15.dp)
-                )
-
-
-
-                OutlinedTextField(
-
-                    value = password,
-
-                    onValueChange = {
-                        password = it
-                    },
-
-                    label = {
-                        Text("Contraseña")
-                    },
-
-
-                    leadingIcon = {
-                        Icon(
-                            Icons.Default.Lock,
-                            contentDescription = null
-                        )
-                    },
-
-
-                    trailingIcon = {
-
-                        IconButton(
-                            onClick = {
-                                mostrarPassword = !mostrarPassword
-                            }
-                        ){
-
-                            Icon(
-
-                                imageVector =
-                                    if(mostrarPassword)
-                                        Icons.Default.Visibility
-                                    else
-                                        Icons.Default.VisibilityOff,
-
-                                contentDescription = null
-                            )
-
-                        }
-
-                    },
-
-
-                    visualTransformation =
-                        if(mostrarPassword)
-                            VisualTransformation.None
-                        else
-                            PasswordVisualTransformation(),
-
-
-                    modifier = Modifier.fillMaxWidth()
-
-                )
-
-
-
-                Spacer(
-                    modifier = Modifier.height(25.dp)
-                )
-
-                Button(
-                    onClick = {
-                        viewModel.iniciarSesion(
-                            correo,
-                            password
-                        ){ rol ->
-                            when(rol){
-                                1 -> irCliente()
-                                2 -> irTecnico()
-                            }
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-
-                    colors = ButtonDefaults.buttonColors(
-
-                        containerColor = Color(0xFF009688)
-
-                    ),
-
-                    shape = RoundedCornerShape(12.dp)
-
-                ){
-
-                    Text(
-                        "Iniciar Sesión"
-                    )
-
+                Surface(shape = RoundedCornerShape(22.dp), color = MaterialTheme.colorScheme.primary, shadowElevation = 4.dp) {
+                    Icon(Icons.Outlined.Build, null, Modifier.padding(16.dp).size(32.dp), tint = MaterialTheme.colorScheme.onPrimary)
                 }
-
-
-
-                Spacer(
-                    modifier = Modifier.height(15.dp)
-                )
-
-
-
-                TextButton(
-                    onClick = {
-                        irRegistro()
-                    }
-                ){
-
-                    Text(
-                        "¿No tienes una cuenta? Registrarse"
-                    )
-
-                }
-
-
-
-                if(mensaje.isNotEmpty()){
-
-
-                    Text(
-
-                        text = mensaje,
-
-                        color = Color.Red,
-
-                        modifier = Modifier.padding(top = 10.dp)
-
-                    )
-
-                }
-
-
+                Text("TecCerca", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary)
+                Text("Encuentra técnicos cerca de ti", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-
-
+            Surface(shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp), color = MaterialTheme.colorScheme.surface) {
+                Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(22.dp)) {
+                    Text("Ingresa a tu cuenta", style = MaterialTheme.typography.titleLarge)
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Correo electrónico", style = MaterialTheme.typography.labelMedium)
+                        OutlinedTextField(
+                            value = correo, onValueChange = { correo = it },
+                            placeholder = { Text("ejemplo@correo.com", style = MaterialTheme.typography.bodyMedium) },
+                            leadingIcon = { Icon(Icons.Outlined.Email, null) },
+                            singleLine = true, enabled = !cargando, modifier = Modifier.fillMaxWidth().semantics { contentDescription = "Correo electrónico" },
+                            shape = RoundedCornerShape(12.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next)
+                        )
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Contraseña", style = MaterialTheme.typography.labelMedium)
+                        OutlinedTextField(
+                            value = password, onValueChange = { password = it }, placeholder = { Text("••••••••") },
+                            leadingIcon = { Icon(Icons.Outlined.Lock, null) },
+                            trailingIcon = {
+                                IconButton(onClick = { mostrarPassword = !mostrarPassword }) {
+                                    Icon(if (mostrarPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                        if (mostrarPassword) "Ocultar contraseña" else "Mostrar contraseña")
+                                }
+                            },
+                            singleLine = true, enabled = !cargando, modifier = Modifier.fillMaxWidth().semantics { contentDescription = "Contraseña" },
+                            shape = RoundedCornerShape(12.dp),
+                            visualTransformation = if (mostrarPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                        )
+                    }
+                    if (mensaje.isNotBlank()) Text(mensaje, color = MaterialTheme.colorScheme.error)
+                    Button(
+                        onClick = {
+                            viewModel.iniciarSesion(correo, password) { rol ->
+                                when (rol) {
+                                    1 -> viewModel.usuario.value?.let(irCliente)
+                                    2 -> irTecnico()
+                                }
+                            }
+                        },
+                        enabled = !cargando && correo.isNotBlank() && password.isNotBlank(),
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp), shape = RoundedCornerShape(12.dp)
+                    ) {
+                        if (cargando) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                        Text(if (cargando) " Ingresando…" else "Iniciar sesión")
+                        if (!cargando) Icon(Icons.AutoMirrored.Filled.ArrowForward, null, Modifier.padding(start = 8.dp).size(24.dp))
+                    }
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                        Text("¿No tienes una cuenta?", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        TextButton(onClick = irRegistro, enabled = !cargando) { Text("Registrarse", style = MaterialTheme.typography.labelMedium) }
+                    }
+                }
+            }
+            Spacer(Modifier.height(24.dp))
         }
-
-
     }
-
-
 }

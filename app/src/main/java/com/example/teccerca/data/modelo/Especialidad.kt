@@ -1,4 +1,7 @@
 package com.example.teccerca.data.modelo
 
-class Especialidad {
-}
+data class Especialidad(
+    val idEspecialidad: Int,
+    val nombre: String,
+    val descripcion: String? = null
+)

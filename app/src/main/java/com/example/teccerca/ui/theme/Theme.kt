@@ -22,12 +22,18 @@ private val EsquemaClaro = lightColorScheme(
     onPrimary = FondoClaro,
     primaryContainer = TealContainer,
     onPrimaryContainer = TealPrimaryDark,
-    secondary = TealPrimaryDark,
-    background = FondoClaro,
+    secondary = androidx.compose.ui.graphics.Color(0xFF21734B),
+    secondaryContainer = androidx.compose.ui.graphics.Color(0xFFD9F5E4),
+    onSecondaryContainer = androidx.compose.ui.graphics.Color(0xFF12462D),
+    tertiary = androidx.compose.ui.graphics.Color(0xFF986600),
+    background = SuperficieClara,
     onBackground = TextoPrimarioClaro,
     surface = FondoClaro,
     onSurface = TextoPrimarioClaro,
     surfaceVariant = SuperficieClara,
+    surfaceContainerLow = SuperficieClara,
+    surfaceContainer = SuperficieClara,
+    outlineVariant = BordeClaro,
     onSurfaceVariant = TextoSecundarioClaro,
     outline = BordeClaro,
     error = RojoError
@@ -38,12 +44,15 @@ private val EsquemaOscuro = darkColorScheme(
     onPrimary = FondoOscuro,
     primaryContainer = TealPrimaryDark,
     onPrimaryContainer = TealContainer,
-    secondary = TealPrimaryLight,
+    secondary = androidx.compose.ui.graphics.Color(0xFF91D5AE),
     background = FondoOscuro,
     onBackground = TextoPrimarioOscuro,
     surface = SuperficieOscura,
     onSurface = TextoPrimarioOscuro,
     surfaceVariant = SuperficieOscura,
+    surfaceContainerLow = SuperficieOscura,
+    surfaceContainer = SuperficieOscura,
+    outlineVariant = BordeOscuro,
     onSurfaceVariant = TextoSecundarioOscuro,
     outline = BordeOscuro,
     error = RojoError
@@ -70,7 +79,7 @@ fun TecCercaTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
